@@ -31,23 +31,14 @@ public:
 
 int main() {
     LaneController controller;
-    double dt = 0.1; // 100ms time step
-    
-    // Simulating a scenario where the car starts 1.5 meters left of the lane center
-    double simulated_drift = -1.5; 
-    
-    std::cout << std::fixed << std::setprecision(3);
-    std::cout << "[C++] Initializing Lane Tracking Controller..." << std::endl;
-    
-    // Simulate 3 correction steps
-    for (int i = 1; i <= 3; ++i) {
-        double steering_action = controller.calculate_steering(simulated_drift, dt);
-        std::cout << "[C++] Step " << i << " | Lateral Drift: " << simulated_drift 
-                  << "m | Action: Steering Command -> " << (steering_action * 180.0 / M_PI) << " degrees" << std::endl;
-        
-        // Simulating the vehicle slowly returning to the center line due to steering action
-        simulated_drift += 0.4; 
+    double lateral_drift;
+    double dt;
+
+    // Continuously listen to incoming data from the Python process pipeline
+    while (std::cin >> lateral_drift >> dt) {
+        double steering_action = controller.calculate_steering(lateral_drift, dt);
+        // Print ONLY the pure numerical result to stdout for Python to parse cleanly
+        std::cout << steering_action << std::endl;
     }
-    
     return 0;
 }
